@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--cfg', type=str,
-                        default='configs/DDD17.yaml',
+                        default='configs/DSEC_Semantic.yaml',
                         help='Configuration file to use')
     args = parser.parse_args()
 

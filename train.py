@@ -2,7 +2,9 @@ import yaml
 import argparse
 from utils.trainer import Trainer
 from utils.func import random_seed
-
+import os
+# Set the CUDA device to 1
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 if __name__ == '__main__':
 

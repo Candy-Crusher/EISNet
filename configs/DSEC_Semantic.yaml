@@ -4,7 +4,7 @@ SEED_NUM: 2
 
 DATASET:
   name: 'DSECEvent'
-  path: '/data0/BochenSpace/Dataset/Semantic_Segmentation_DVS/DESC/desc_seg' # Replace with your own path
+  path: '/mnt/sdc/lxy/datasets/DSEC_raw/DSEC' # Replace with your own path
   require_paired_data: True
   classes: 11
   event_representation: 'AET'
@@ -18,7 +18,7 @@ MODEL:
   pretrained_ev: True
   version_img: 'mit_b2'
   pretrained_img: True
-  pretrained_path: './models/pretrained_weights/SegFormer_MiT'
+  pretrained_path: '/home/xy/work/adap_v/DELIVER/checkpoints/pretrained/segformer'
   aet_rep: True
 
 TRAIN:

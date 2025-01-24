@@ -182,7 +182,7 @@ class Trainer():
         if scores['mean_iou'] >= best_mIOU:
             best_mIOU = scores['mean_iou']
             torch.save({'epoch': epoch_id + 1, 'state_dict': self.model.state_dict()},
-                       os.path.join(self.cfg['TRAIN']['log_dir'], 'best_model' + '.pth'))
+                       os.path.join(self.cfg['TRAIN']['log_dir'], 'best_model_I1toSeg1' + '.pth'))
             print("Save the best model at {}".format(os.path.join(self.cfg['TRAIN']['log_dir'], 'best_model' + '.pth')))
             print('New best mIOU is %.4f'%best_mIOU)
             self.printer.cprint('New best mIOU is %.4f'%best_mIOU)

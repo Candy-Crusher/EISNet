@@ -14,6 +14,10 @@ from joblib import Parallel, delayed
 from datasets.extract_data_tools.DSEC.eventslicer import EventSlicer
 import albumentations as A
 import datasets.data_util as data_util
+import os
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, message="TypedStorage is deprecated")
+
 
 
 class Sequence(Dataset):
@@ -84,13 +88,16 @@ class Sequence(Dataset):
         self.require_paired_data = require_paired_data
 
         # load timestamps
-        self.timestamps = np.loadtxt(str(seq_path / 'semantic' / 'timestamps.txt'), dtype='int64')
-
+        seq_name = os.path.basename(seq_path)
+        self.timestamps = np.loadtxt(str(seq_path / f'{seq_name}_semantic_timestamps.txt'), dtype='int64')
+        # 从第11个开始 每隔9个取一个
+        self.timestamps = self.timestamps[11::9]
+        my_root = Path('/mnt/sdc/lxy/datasets/DSEC/DSEC/dsec_anytime_50_N/day/')
         # load label paths
         if self.semseg_num_classes == 11:
-            label_dir = seq_path / 'semantic' / '11classes' / 'data'
+            label_dir = my_root / 'gtFine_t1' / mode / seq_name
         elif self.semseg_num_classes == 19:
-            label_dir = seq_path / 'semantic' / '19classes' / 'data'
+            label_dir = seq_path / '19classes'
         else:
             raise ValueError
         assert label_dir.is_dir()
@@ -104,8 +111,7 @@ class Sequence(Dataset):
 
         # load images paths
         if self.require_paired_data:
-            img_dir = seq_path / 'images'
-            img_left_dir = img_dir / 'left' / 'ev_inf'
+            img_left_dir = my_root / 'leftImg8bit_t1' / mode/seq_name
             assert img_left_dir.is_dir()
             img_left_pathstrings = list()
             for entry in img_left_dir.iterdir():
@@ -114,15 +120,16 @@ class Sequence(Dataset):
             img_left_pathstrings.sort()
             self.img_left_pathstrings = img_left_pathstrings
             assert len(self.img_left_pathstrings) == self.timestamps.size
+            # print(f'{seq_name}: Found {len(self.img_left_pathstrings)} paired image samples.')
 
-        # Remove several label paths and corresponding timestamps in the remove_time_window (i.e., the first six samples).
-        # This is necessary because we do not have enough events before the first label.
-        self.timestamps = self.timestamps[(self.remove_time_window // 100 + 1) * 2:]
-        del self.label_pathstrings[:(self.remove_time_window // 100 + 1) * 2]
-        assert len(self.label_pathstrings) == self.timestamps.size
-        if self.require_paired_data:
-            del self.img_left_pathstrings[:(self.remove_time_window // 100 + 1) * 2]
-            assert len(self.img_left_pathstrings) == self.timestamps.size
+        # # Remove several label paths and corresponding timestamps in the remove_time_window (i.e., the first six samples).
+        # # This is necessary because we do not have enough events before the first label.
+        # self.timestamps = self.timestamps[(self.remove_time_window // 100 + 1) * 2:]
+        # del self.label_pathstrings[:(self.remove_time_window // 100 + 1) * 2]
+        # assert len(self.label_pathstrings) == self.timestamps.size
+        # if self.require_paired_data:
+        #     del self.img_left_pathstrings[:(self.remove_time_window // 100 + 1) * 2]
+        #     assert len(self.img_left_pathstrings) == self.timestamps.size
 
         self.h5f = dict()
         self.rectify_ev_maps = dict()
@@ -182,7 +189,7 @@ class Sequence(Dataset):
             h5f.close()
 
     def __len__(self):
-        return (self.timestamps.size + 1) // 2
+        return self.timestamps.size
 
     def rectify_events(self, x: np.ndarray, y: np.ndarray, location: str):
         assert location in self.locations
@@ -233,11 +240,11 @@ class Sequence(Dataset):
     def __getitem__(self, index):
         output = {}
         # Load the ground truth
-        label_path = Path(self.label_pathstrings[index * 2])
+        label_path = Path(self.label_pathstrings[index])
         # print(label_path)
         label = self.get_label(label_path)
         # Load the events ang generate a frame-based representation
-        ts_end = self.timestamps[index * 2]
+        ts_end = self.timestamps[index]
         event_tensor = None
         for location in self.locations:
             if self.fixed_duration:
@@ -314,9 +321,9 @@ class Sequence(Dataset):
         # Generate the event-image pair
         img_tensor = None
         if self.require_paired_data:
-            img_left_path = Path(self.img_left_pathstrings[index * 2])
+            img_left_path = Path(self.img_left_pathstrings[index])
             # print(img_left_path)
-            img_tensor = self.get_img(img_left_path)[:, :-40, :]
+            img_tensor = self.get_img(img_left_path)
 
         # Data augmentation
         if self.random_crop and self.mode == 'train':
