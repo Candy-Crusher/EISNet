@@ -273,7 +273,7 @@ class Sequence(Dataset):
                     else:
                         events = np.stack([x_rect, y_rect, t, p], axis=1)
                         event_representation = data_util.generate_input_representation(events, self.event_representation,
-                                                                  (self.height, self.width))
+                                                                  (self.height, self.width),nr_temporal_bins=self.num_bins,)
                         event_representation = torch.from_numpy(event_representation).type(torch.FloatTensor)
 
                     if event_tensor is None:

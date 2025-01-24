@@ -51,15 +51,17 @@ class Trainer():
                                                 batch_size=self.cfg['TRAIN']['batch_size'])
         elif self.cfg['DATASET']['name'] == 'DSECEvent':
             from datasets.dsec_dataset import DSECEvent
-            self.training_dataset = DSECEvent(self.cfg['DATASET']['path'], nr_events_data=1,
-                                              nr_events_window=self.cfg['DATASET']['nr_events'], augmentation=True,
+            self.training_dataset = DSECEvent(self.cfg['DATASET']['path'], nr_events_data=1, augmentation=True,
+                                              delta_t_per_data=self.cfg['DATASET']['delta_t'],
+                                              # nr_events_window=self.cfg['DATASET']['nr_events'],
                                               mode='train', event_representation=self.cfg['DATASET']['event_representation'],
                                               nr_bins_per_data=self.cfg['DATASET']['nr_bins'],
                                               require_paired_data=self.cfg['DATASET']['require_paired_data'],
                                               semseg_num_classes=self.cfg['DATASET']['classes'],
                                               fixed_duration=self.cfg['DATASET']['fixed_duration'], random_crop=True)
-            self.validation_dataset = DSECEvent(self.cfg['DATASET']['path'], nr_events_data=1,
-                                                nr_events_window=self.cfg['DATASET']['nr_events'], augmentation=False,
+            self.validation_dataset = DSECEvent(self.cfg['DATASET']['path'], nr_events_data=1, augmentation=False,
+                                                delta_t_per_data=self.cfg['DATASET']['delta_t'],
+                                                # nr_events_window=self.cfg['DATASET']['nr_events'],
                                                 mode='val', event_representation=self.cfg['DATASET']['event_representation'],
                                                 nr_bins_per_data=self.cfg['DATASET']['nr_bins'],
                                                 require_paired_data=self.cfg['DATASET']['require_paired_data'],
@@ -182,7 +184,7 @@ class Trainer():
         if scores['mean_iou'] >= best_mIOU:
             best_mIOU = scores['mean_iou']
             torch.save({'epoch': epoch_id + 1, 'state_dict': self.model.state_dict()},
-                       os.path.join(self.cfg['TRAIN']['log_dir'], 'best_model_I1toSeg1' + '.pth'))
+                       os.path.join(self.cfg['TRAIN']['log_dir'], 'best_model' + '.pth'))
             print("Save the best model at {}".format(os.path.join(self.cfg['TRAIN']['log_dir'], 'best_model' + '.pth')))
             print('New best mIOU is %.4f'%best_mIOU)
             self.printer.cprint('New best mIOU is %.4f'%best_mIOU)

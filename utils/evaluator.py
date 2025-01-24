@@ -29,8 +29,9 @@ class Evaluator():
                                              batch_size=self.cfg['EVAL']['batch_size'])
         elif self.cfg['DATASET']['name'] == 'DSECEvent':
             from datasets.dsec_dataset import DSECEvent
-            self.testing_dataset = DSECEvent(self.cfg['DATASET']['path'], nr_events_data=1,
-                                             nr_events_window=self.cfg['DATASET']['nr_events'], augmentation=False,
+            self.testing_dataset = DSECEvent(self.cfg['DATASET']['path'], nr_events_data=1, augmentation=False,
+                                            #  nr_events_window=self.cfg['DATASET']['nr_events'],
+                                             delta_t_per_data=self.cfg['DATASET']['delta_t'],
                                              mode='val', event_representation=self.cfg['DATASET']['event_representation'],
                                              nr_bins_per_data=self.cfg['DATASET']['nr_bins'],
                                              require_paired_data=self.cfg['DATASET']['require_paired_data'],

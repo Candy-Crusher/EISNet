@@ -1,4 +1,4 @@
-DEVICE: 'cuda:0'
+DEVICE: 'cuda:1'
 NUM_WORKERS: 8
 SEED_NUM: 2
 
@@ -8,8 +8,10 @@ DATASET:
   require_paired_data: True
   classes: 11
   event_representation: 'AET'
-  fixed_duration: False
-  nr_events: 100000
+  # fixed_duration: False
+  # nr_events: 100000
+  fixed_duration: True
+  delta_t: 50
   nr_bins: 3
   img_chnls: 3
 
@@ -24,10 +26,12 @@ MODEL:
 TRAIN:
   batch_size: 8
   lr_init: 0.00006
-  num_epochs: 60
-  save_every_n_epochs: 60
-  log_dir: 'log/DSEC/EISNet'
+  num_epochs: 400
+  save_every_n_epochs: 50
+  log_dir: 'log/DSEC/EISNet/fix_duration_I1toSeg1'
 
 EVAL:
   batch_size: 8
   weight_path: 'weights/EISNet_DSEC_440x640.pth'
+  # weight_path: '/home/xy/work/adap_v/EISNet/log/DSEC/EISNet/best_model_I1toSeg1.pth'
+  

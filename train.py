@@ -4,7 +4,7 @@ from utils.trainer import Trainer
 from utils.func import random_seed
 import os
 # Set the CUDA device to 1
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3,4,5,6,7"
 
 if __name__ == '__main__':
 
