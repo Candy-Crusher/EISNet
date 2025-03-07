@@ -17,37 +17,41 @@ class DatasetProvider:
         train_path = dataset_path / 'train'
         val_path = dataset_path / 'test'
         assert dataset_path.is_dir(), str(dataset_path)
-        assert train_path.is_dir(), str(train_path)
-        assert val_path.is_dir(), str(val_path)
+        # assert train_path.is_dir(), str(train_path)
+        # assert val_path.is_dir(), str(val_path)
 
         if mode == 'train':
             train_sequences = list()
-            train_sequences_namelist = ['zurich_city_00_a', 'zurich_city_01_a', 'zurich_city_02_a',
-                                        'zurich_city_04_a', 'zurich_city_05_a', 'zurich_city_06_a',
-                                        'zurich_city_07_a', 'zurich_city_08_a']
-            for child in train_path.iterdir():
-                if any(k in str(child) for k in train_sequences_namelist):
-                    train_sequences.append(Sequence(child, 'train', event_representation, nr_events_data, delta_t_per_data,
-                                                    nr_events_window, nr_bins_per_data, require_paired_data, normalize_event,
-                                                    separate_pol, semseg_num_classes, augmentation, fixed_duration,
-                                                    random_crop=random_crop))
-                else:
-                    continue
+            # train_sequences_namelist = ['zurich_city_00_a', 'zurich_city_01_a', 'zurich_city_02_a',
+            #                             'zurich_city_04_a', 'zurich_city_05_a', 'zurich_city_06_a',
+            #                             'zurich_city_07_a', 'zurich_city_08_a']
+            train_sequences_namelist = ['Town01', 'Town02', 'Town02_01', 'Town03', 'Town03_01', 'Town04', 'Town05']
+            # for child in train_path.iterdir():
+            #     if any(k in str(child) for k in train_sequences_namelist):
+            for scene in train_sequences_namelist:
+                train_sequences.append(Sequence(scene, 'train', event_representation, nr_events_data, delta_t_per_data,
+                                                nr_events_window, nr_bins_per_data, require_paired_data, normalize_event,
+                                                separate_pol, semseg_num_classes, augmentation, fixed_duration,
+                                                random_crop=random_crop))
+                # else:
+                #     continue
 
             self.train_dataset = torch.utils.data.ConcatDataset(train_sequences)
             self.train_dataset.require_paired_data = require_paired_data
 
         elif mode == 'val':
             val_sequences = list()
-            val_sequences_namelist = ['zurich_city_13_a', 'zurich_city_14_c', 'zurich_city_15_a']
-            for child in val_path.iterdir():
-                if any(k in str(child) for k in val_sequences_namelist):
-                    val_sequences.append(Sequence(child, 'val', event_representation, nr_events_data, delta_t_per_data,
-                                                  nr_events_window, nr_bins_per_data, require_paired_data, normalize_event,
-                                                  separate_pol, semseg_num_classes, augmentation, fixed_duration,
-                                                  random_crop=random_crop))
-                else:
-                    continue
+            # val_sequences_namelist = ['zurich_city_13_a', 'zurich_city_14_c', 'zurich_city_15_a']
+            val_sequences_namelist = ['Town10']
+            # for child in val_path.iterdir():
+                # if any(k in str(child) for k in val_sequences_namelist):
+            for scene in val_sequences_namelist:
+                val_sequences.append(Sequence(scene, 'val', event_representation, nr_events_data, delta_t_per_data,
+                                            nr_events_window, nr_bins_per_data, require_paired_data, normalize_event,
+                                            separate_pol, semseg_num_classes, augmentation, fixed_duration,
+                                            random_crop=random_crop))
+                # else:
+                #     continue
 
             self.val_dataset = torch.utils.data.ConcatDataset(val_sequences)
             self.val_dataset.require_paired_data = require_paired_data

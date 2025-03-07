@@ -77,6 +77,9 @@ class EISNet(nn.Module):
         outs = []
         """ Learn event-based representations """
         if self.aet_rep:
+            # print(x_ev.shape)
+            # print(self.num_channels_ev)
+            # exit(0)
             x_ev = self.rep(x_ev[:, 0:self.num_channels_ev//2, :, :], x_ev[:, self.num_channels_ev//2:, :, :])
         else:
             x_ev = x_ev[:, 0:self.num_channels_ev, :, :]
